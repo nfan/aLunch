@@ -38,7 +38,7 @@ define(['underscore', 'Backbone', 'jquery',
                 },
 		
 				onSubmit: function() {
-					var link="mailto:fan_nan@126.com";
+					var link="mailto:shenshanliang@gmail.com";
 					var d = new Date();
 					var subject = "Lunch ";
 					var curr_date = d.getDate();
@@ -49,6 +49,7 @@ define(['underscore', 'Backbone', 'jquery',
 					var body=$("#location").val()+","+$("#sum").val()+";";
 					$("#content li").each(function(idx, el) {
 		        			body += $(el).find(".name").val()+","+$(el).find(".fee").val()+";";
+		        			link += ","+$(el).find(".name").val()+"@adobe.com";
 		    		});
 		    		subject+=";"+body;
 		    		var el = $("#linkSubmit");
