@@ -6,8 +6,8 @@ define(['underscore', 'Backbone', 'jquery',
     function(_, Backbone, $, LunchHtml) {
         var lunch = Backbone.View.extend({
                 el: 'body',
-                locations: ['桃屋', '醉爱', '清华园宾馆'],
-                persons: ['nfan','slshen', 'wqu'],
+                locations: ['桃屋', '醉爱', '清华园宾馆', '肉夹馍'],
+                persons: ['nfan','shshen', 'wqu', 'mjiao', 'yewang'],
                 events: {
                     'click #btnAdd': 'onAdd',
                     'click #btnSubmit': 'onSubmit',
