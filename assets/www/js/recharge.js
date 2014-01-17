@@ -1,30 +1,25 @@
 define(['underscore', 'Backbone', 'jquery',
-        'text!lunch.html!strip',
-        'recharge',
+        'text!recharge.html!strip',
         'jqueryui',
         'jqueryuiTouch'
        ],
-    function(_, Backbone, $, LunchHtml,  Recharge) {
-        var lunch = Backbone.View.extend({
+    function(_, Backbone, $, RechargeHtml) {
+        var recharge = Backbone.View.extend({
                 el: 'body',
-                locations: ['桃屋', '醉爱', '清华园宾馆', '肉夹馍'],
                 persons: ['nfan','shshen', 'wqu', 'mjiao', 'yewang'],
                 events: {
                     'click #btnAdd': 'onAdd',
                     'click #btnSubmit': 'onSubmit',
-                    'click #btnEven': 'onEven',
-                    'click #btnRecharge': 'onRecharge',
                     'click #btnRemove': 'onRemove'
                 },
                 
                 initialize: function(options) {
-                    _.bindAll(this, 'render', 'onAdd', 'onSubmit', 'onEven', 'onRecharge', 'onRemove', 'setHandler', 'refreshCnt');
+                    _.bindAll(this, 'render', 'onAdd', 'onSubmit', 'onRemove', 'setHandler', 'refreshCnt');
                 },
 
                 render: function() {
-                    var html = LunchHtml;
+                    var html = RechargeHtml;
                     this.$el.html(html);
-                    $("#location").autocomplete({source: this.locations});
                     $("#sum").click(this.refreshCnt);
                     $("#sum").blur(this.refreshCnt);
                     this.onAdd();
@@ -42,13 +37,13 @@ define(['underscore', 'Backbone', 'jquery',
 				onSubmit: function() {
 					var link="mailto:shenshanliang@gmail.com";
 					var d = new Date();
-					var subject = "Lunch ";
+					var subject = "Recharge ";
 					var curr_date = d.getDate();
 				    var curr_month = d.getMonth() + 1; //Months are zero based
 				    var curr_year = d.getFullYear();
 				    subject += curr_year + "-" + curr_month + "-" + curr_date;
 				    
-					var body=$("#location").val()+","+$("#sum").val()+";";
+					var body=","+$("#sum").val()+";";
 					$("#content li").each(function(idx, el) {
 		        			body += $(el).find(".name").val()+","+$(el).find(".fee").val()+";";
 		        			link += ","+$(el).find(".name").val()+"@adobe.com";
@@ -60,22 +55,6 @@ define(['underscore', 'Backbone', 'jquery',
 
 				},
 
-				onEven: function() {
-					var sum = parseFloat($("#sum").val());
-		    			var cnt = parseFloat($("#cnt").val());
-		    			var av = sum/cnt;
-		    			$("#content li input.fee").each(function(idx, el) {
-		        			$(el).val(av);
-		    			});
-		    			this.refreshCnt();
-				},
-				
-				onRecharge: function() {
-						this.remove();//remove view and unbind events
-				        var recharge = new Recharge();
-						recharge.render();
-				},
-		
 				onRemove: function(evt){
 					$(evt.target).parents("li").remove();
 		    		this.refreshCnt();
@@ -118,6 +97,6 @@ define(['underscore', 'Backbone', 'jquery',
 		
             });
 
-            return lunch;
+            return recharge;
     }
 );
