@@ -5,16 +5,16 @@ define(['underscore', 'Backbone', 'jquery',
        ],
     function(_, Backbone, $, RechargeHtml) {
         var recharge = Backbone.View.extend({
-                el: 'body',
                 persons: ['nfan','shshen', 'wqu', 'mjiao', 'yewang'],
                 events: {
                     'click #btnAdd': 'onAdd',
                     'click #btnSubmit': 'onSubmit',
-                    'click #btnRemove': 'onRemove'
+                    'click #btnRemove': 'onRemove',
+                    'click #btnLunch': 'onLunch'
                 },
                 
                 initialize: function(options) {
-                    _.bindAll(this, 'render', 'onAdd', 'onSubmit', 'onRemove', 'setHandler', 'refreshCnt');
+                    _.bindAll(this, 'render', 'onAdd', 'onLunch', 'onSubmit', 'onRemove', 'setHandler', 'refreshCnt');
                 },
 
                 render: function() {
@@ -27,31 +27,50 @@ define(['underscore', 'Backbone', 'jquery',
                     
                 },
 
+				onLunch: function() {
+						this.remove();//remove view and unbind events
+						require(['lunch'], function(Lunch) {
+	                        var app = new Lunch();
+							$("body").append(app.render().el);
+	                    });
+				},
+				
                 onAdd: function() {
-	    			var el = $($("#tmplPerson").html());
+	    			var el = $(this.$el.find("#tmplPerson").html());
 	    			this.$el.find("#content ol").append(el);
 	    			this.setHandler(el);
 	    			this.refreshCnt();
                 },
 		
 				onSubmit: function() {
+					var param = {type: "recharge"};
+					
 					var link="mailto:shenshanliang@gmail.com";
+					
 					var d = new Date();
-					var subject = "Recharge ";
 					var curr_date = d.getDate();
 				    var curr_month = d.getMonth() + 1; //Months are zero based
 				    var curr_year = d.getFullYear();
-				    subject += curr_year + "-" + curr_month + "-" + curr_date;
-				    
-					var body=","+$("#sum").val()+";";
+
+				    param.date = curr_year + "-" + curr_month + "-" + curr_date;
+
+					param.sum = $("#sum1").val();
+					
+					var fees = [];
 					$("#content li").each(function(idx, el) {
-		        			body += $(el).find(".name").val()+","+$(el).find(".fee").val()+";";
-		        			link += ","+$(el).find(".name").val()+"@adobe.com";
+		        			var fee = {};
+		        			fee[$(el).find(".name").val()] = $(el).find(".fee").val();
+		        			fees.push(fee);
 		    		});
-		    		subject+=";"+body;
+		    		
+		    		param.recharges = fees;
+		    		
+		    		var subject = JSON.stringify(param);
+		    		
 		    		var el = $("#linkSubmit");
 		    		el.attr("href", link + "?" + "subject=" + subject);
 		    		window.location.href = el.attr("href");
+
 
 				},
 
@@ -68,7 +87,8 @@ define(['underscore', 'Backbone', 'jquery',
 				      range: "min",
 				      value: 0,
 				      min: 0,
-				      max: 100,
+				      step: 10,
+				      max: 500,
 				      slide: function( event, ui ) {
 				        el.find("input.fee").val( ui.value );
 				        that.refreshCnt();

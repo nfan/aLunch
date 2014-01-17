@@ -35,7 +35,7 @@ require(['Backbone', 'jquery', 'domReady'],
                     //UPGRADE: upgrador.check(upgraded);
                     require(['lunch'], function(lunch) {
                         var app = new lunch();
-						app.render();
+						$("body").append(app.render().el);
                     });
                 }
         

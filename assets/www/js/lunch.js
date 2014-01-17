@@ -1,12 +1,10 @@
 define(['underscore', 'Backbone', 'jquery',
         'text!lunch.html!strip',
-        'recharge',
         'jqueryui',
         'jqueryuiTouch'
        ],
-    function(_, Backbone, $, LunchHtml,  Recharge) {
+    function(_, Backbone, $, LunchHtml) {
         var lunch = Backbone.View.extend({
-                el: 'body',
                 locations: ['桃屋', '醉爱', '清华园宾馆', '肉夹馍'],
                 persons: ['nfan','shshen', 'wqu', 'mjiao', 'yewang'],
                 events: {
@@ -33,27 +31,37 @@ define(['underscore', 'Backbone', 'jquery',
                 },
 
                 onAdd: function() {
-	    			var el = $($("#tmplPerson").html());
+	    			var el = $(this.$el.find("#tmplPerson").html());
 	    			this.$el.find("#content ol").append(el);
 	    			this.setHandler(el);
 	    			this.refreshCnt();
                 },
 		
 				onSubmit: function() {
+					var param = {type: "lunch"};
+					
 					var link="mailto:shenshanliang@gmail.com";
+					
 					var d = new Date();
-					var subject = "Lunch ";
 					var curr_date = d.getDate();
 				    var curr_month = d.getMonth() + 1; //Months are zero based
 				    var curr_year = d.getFullYear();
-				    subject += curr_year + "-" + curr_month + "-" + curr_date;
-				    
-					var body=$("#location").val()+","+$("#sum").val()+";";
+
+				    param.date = curr_year + "-" + curr_month + "-" + curr_date;
+				    param.location = $("#location").val();
+					param.sum = $("#sum").val();
+					
+					var fees = [];
 					$("#content li").each(function(idx, el) {
-		        			body += $(el).find(".name").val()+","+$(el).find(".fee").val()+";";
-		        			link += ","+$(el).find(".name").val()+"@adobe.com";
+		        			var fee = {};
+		        			fee[$(el).find(".name").val()] = $(el).find(".fee").val();
+		        			fees.push(fee);
 		    		});
-		    		subject+=";"+body;
+		    		
+		    		param.fees = fees;
+		    		
+		    		var subject = JSON.stringify(param);
+		    		
 		    		var el = $("#linkSubmit");
 		    		el.attr("href", link + "?" + "subject=" + subject);
 		    		window.location.href = el.attr("href");
@@ -72,8 +80,10 @@ define(['underscore', 'Backbone', 'jquery',
 				
 				onRecharge: function() {
 						this.remove();//remove view and unbind events
-				        var recharge = new Recharge();
-						recharge.render();
+						require(['recharge'], function(Recharge) {
+	                        var app = new Recharge();
+							$("body").append(app.render().el);
+	                    });
 				},
 		
 				onRemove: function(evt){
